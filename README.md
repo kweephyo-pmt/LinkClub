@@ -13,6 +13,8 @@ A modern, full-stack real-time chat application built with the MERN stack, featu
 - **Friend System**: Add, manage, and chat with friends
 - **Online Status**: Real-time user presence indicators
 - **Image Sharing**: Upload and share images in conversations
+- **Notifications System**: Real-time friend request notifications with sound alerts
+- **Message Status**: Read receipts and delivery status indicators
 - **Responsive Design**: Mobile-first design with TailwindCSS and DaisyUI
 - **Modern UI**: Clean, intuitive interface with emoji support
 - **Global State Management**: Efficient state handling with Zustand
