@@ -1,12 +1,39 @@
-import { X, Phone, Video, MoreVertical, ArrowLeft } from "lucide-react";
+import { X, MoreVertical, ArrowLeft, UserMinus } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
-import { useCallStore } from "../store/useCallStore";
+import { useFriendStore } from "../store/useFriendStore";
+import { useState, useEffect } from "react";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
-  const { startCall } = useCallStore();
+  const { removeFriend } = useFriendStore();
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleUnfriend = async () => {
+    if (window.confirm(`Are you sure you want to remove ${selectedUser.fullName} from your friends?`)) {
+      await removeFriend(selectedUser._id);
+      setShowDropdown(false);
+      setSelectedUser(null); // Close chat after unfriending
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.dropdown')) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-20 lg:fixed lg:top-16 lg:left-80 lg:z-20 p-4 sm:p-4 lg:p-4 border-b border-base-300/30 bg-base-100/95 backdrop-blur-md shadow-sm">
@@ -46,27 +73,29 @@ const ChatHeader = () => {
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 sm:gap-3 lg:gap-2">
-          <button 
-            onClick={() => {
-              console.log('Starting audio call with:', selectedUser);
-              startCall(selectedUser, 'audio');
-            }}
-            className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors flex items-center justify-center"
-          >
-            <Phone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-4 lg:h-4 text-primary" />
-          </button>
-          <button 
-            onClick={() => {
-              console.log('Starting video call with:', selectedUser);
-              startCall(selectedUser, 'video');
-            }}
-            className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors flex items-center justify-center"
-          >
-            <Video className="w-5 h-5 sm:w-6 sm:h-6 lg:w-4 lg:h-4 text-primary" />
-          </button>
-          <button className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-base-200 hover:bg-base-300 transition-colors flex items-center justify-center">
-            <MoreVertical className="w-5 h-5 sm:w-6 sm:h-6 lg:w-4 lg:h-4 text-base-content" />
-          </button>
+          {/* More options dropdown */}
+          <div className="dropdown dropdown-end">
+            <button 
+              tabIndex={0}
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-base-200 hover:bg-base-300 transition-colors flex items-center justify-center"
+            >
+              <MoreVertical className="w-5 h-5 sm:w-6 sm:h-6 lg:w-4 lg:h-4 text-base-content" />
+            </button>
+            {showDropdown && (
+              <ul tabIndex={0} className="dropdown-content mt-3 z-[50] p-2 shadow-xl bg-base-100 rounded-xl w-48 border border-base-300/50">
+                <li>
+                  <button 
+                    onClick={handleUnfriend}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-error/10 hover:text-error transition-colors rounded-lg"
+                  >
+                    <UserMinus className="w-4 h-4" />
+                    Remove Friend
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
           {/* Desktop close button */}
           <button 
             onClick={() => setSelectedUser(null)}

@@ -9,6 +9,7 @@ const MessageInput = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const inputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
   // Common emojis for quick access
@@ -87,6 +88,13 @@ const MessageInput = () => {
       setText("");
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
+      
+      // Maintain focus on input after sending
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 0);
     } catch (error) {
       console.error("Failed to send message:", error);
       toast.error("Failed to send message. Please try again.");
@@ -173,13 +181,13 @@ const MessageInput = () => {
         <form onSubmit={handleSendMessage} className="flex-1 flex items-center gap-2">
           <div className="flex-1 relative">
             <input
+              ref={inputRef}
               type="text"
               className="w-full h-10 px-4 rounded-full bg-base-200 border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm placeholder:text-base-content/50"
               placeholder={isLoading ? "Sending..." : "Aa"}
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={isLoading}
               style={{ fontSize: '16px' }}
             />
           </div>

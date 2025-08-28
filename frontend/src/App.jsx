@@ -1,5 +1,4 @@
 import Navbar from "./components/Navbar";
-import CallModal from "./components/CallModal";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -12,7 +11,6 @@ import FriendsPage from "./pages/FriendsPage";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
-import { useCallStore } from "./store/useCallStore";
 import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
@@ -21,15 +19,6 @@ import { Toaster } from "react-hot-toast";
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
-  const { 
-    isCallModalOpen, 
-    callType, 
-    callData, 
-    acceptCall,
-    rejectCall,
-    endCall,
-    closeCallModal
-  } = useCallStore();
 
   console.log({ onlineUsers });
 
@@ -60,17 +49,6 @@ const App = () => {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/friends" element={authUser ? <FriendsPage /> : <Navigate to="/login" />} />
       </Routes>
-
-      {/* Call Modal */}
-      <CallModal
-        isOpen={isCallModalOpen}
-        onClose={closeCallModal}
-        callType={callType}
-        callData={callData}
-        onAccept={acceptCall}
-        onReject={rejectCall}
-        onEndCall={endCall}
-      />
 
       <Toaster />
     </div>

@@ -120,12 +120,6 @@ export const useAuthStore = create((set, get) => ({
       import("./useChatStore").then(({ useChatStore }) => {
         useChatStore.getState().subscribeToMessages();
       });
-      
-      // Initialize WebRTC calling system
-      import("./useCallStore").then(({ useCallStore }) => {
-        console.log('Auth: Initializing WebRTC from socket connection');
-        useCallStore.getState().initializeWebRTC();
-      });
     }, 100);
   },
   disconnectSocket: () => {
