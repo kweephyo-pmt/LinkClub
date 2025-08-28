@@ -78,7 +78,7 @@ Create `.env` files in both backend and frontend directories:
 #### Backend (.env)
 ```env
 MONGODB_URI=mongodb://localhost:27017/linkclub
-# or for MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/linkclub
+# or for MongoDB Atlas: 
 
 PORT=5001
 JWT_SECRET=your-super-secret-jwt-key
