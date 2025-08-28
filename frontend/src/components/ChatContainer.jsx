@@ -43,7 +43,7 @@ const ChatContainer = () => {
     <div className="flex-1 flex flex-col h-full bg-base-100 w-full">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto px-4 py-3 lg:p-6 space-y-2 lg:space-y-4 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent min-h-0 pt-16 pb-20 lg:pt-2 lg:pb-2">
+      <div className="flex-1 overflow-y-auto px-4 py-3 lg:p-6 space-y-2 lg:space-y-4 scrollbar-thin scrollbar-thumb-base-300 scrollbar-track-transparent min-h-0 pt-28 pb-20 lg:pt-20 lg:pb-6">
         {messages.map((message, index) => {
           const isCurrentUser = message.senderId === authUser._id;
           const prevMessage = messages[index - 1];
