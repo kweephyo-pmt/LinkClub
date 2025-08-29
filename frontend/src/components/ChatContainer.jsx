@@ -53,7 +53,7 @@ const ChatContainer = () => {
           
           return (
           <div
-            key={message._id}
+            key={`${message._id || `temp-${Date.now()}-${index}`}-${message.createdAt}-${index}`}
             className={`flex items-end gap-1 mb-1 ${
               isCurrentUser ? "justify-end" : "justify-start"
             }`}
@@ -84,29 +84,48 @@ const ChatContainer = () => {
               )}
               
               <div className={`inline-block px-4 py-3 rounded-3xl ${
-                isCurrentUser 
-                  ? "bg-primary text-primary-content rounded-br-lg" 
-                  : "bg-base-200 text-base-content rounded-bl-lg"
+                message.isCallHistory 
+                  ? "bg-base-300/50 text-base-content/70 border border-base-300/30" 
+                  : isCurrentUser 
+                    ? "bg-primary text-primary-content rounded-br-lg" 
+                    : "bg-base-200 text-base-content rounded-bl-lg"
               } ${
                 !isFirstInGroup && !isLastInGroup ? "rounded-3xl" :
                 isFirstInGroup && !isLastInGroup ? (isCurrentUser ? "rounded-br-3xl" : "rounded-bl-3xl") :
                 !isFirstInGroup && isLastInGroup ? (isCurrentUser ? "rounded-tr-3xl" : "rounded-tl-3xl") :
                 ""
               }`}>
-                {message.image && (
-                  <img
-                    src={message.image}
-                    alt="Attachment"
-                    className="max-w-[240px] w-full h-auto rounded-2xl mb-1 cursor-pointer"
-                    style={{ 
-                      maxHeight: '200px',
-                      objectFit: 'cover',
-                      minHeight: '80px'
-                    }}
-                    onClick={() => window.open(message.image, '_blank')}
-                  />
+                {message.isCallHistory ? (
+                  <div className="flex items-center gap-2">
+                    {message.callType === 'video' ? (
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                    )}
+                    <span className="text-sm italic">{message.text}</span>
+                  </div>
+                ) : (
+                  <>
+                    {message.image && (
+                      <img
+                        src={message.image}
+                        alt="Attachment"
+                        className="max-w-[240px] w-full h-auto rounded-2xl mb-1 cursor-pointer"
+                        style={{ 
+                          maxHeight: '200px',
+                          objectFit: 'cover',
+                          minHeight: '80px'
+                        }}
+                        onClick={() => window.open(message.image, '_blank')}
+                      />
+                    )}
+                    {message.text && <span className="text-sm sm:text-base leading-relaxed">{message.text}</span>}
+                  </>
                 )}
-                {message.text && <span className="text-sm sm:text-base leading-relaxed">{message.text}</span>}
               </div>
               
               {/* Message status indicators - only for current user's messages and last in group */}

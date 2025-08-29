@@ -120,6 +120,28 @@ export const useAuthStore = create((set, get) => ({
       import("./useChatStore").then(({ useChatStore }) => {
         useChatStore.getState().subscribeToMessages();
       });
+
+      // Initialize call notifications
+      import("./useCallStore").then(({ useCallStore }) => {
+        const callStore = useCallStore.getState();
+        
+        
+        socket.on("incoming-call", (data) => {
+          callStore.setIncomingCall(data);
+        });
+
+        socket.on("call-response", () => {
+          // Handle call response if needed
+        });
+
+        socket.on("call-failed", (data) => {
+          import("react-hot-toast").then(({ default: toast }) => {
+            toast.error(data.reason);
+          });
+        });
+
+        
+      });
     }, 100);
   },
   disconnectSocket: () => {

@@ -1,4 +1,6 @@
 import Navbar from "./components/Navbar";
+import NotificationPermissionBanner from "./components/NotificationPermissionBanner";
+import IncomingCallModal from "./components/IncomingCallModal";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -7,6 +9,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
 import FriendsPage from "./pages/FriendsPage";
+import CallPage from "./pages/CallPage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
@@ -39,6 +42,7 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
+      {authUser && <NotificationPermissionBanner />}
       {authUser && <Navbar />}
 
       <Routes>
@@ -48,9 +52,11 @@ const App = () => {
         <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/friends" element={authUser ? <FriendsPage /> : <Navigate to="/login" />} />
+        <Route path="/call/:id" element={authUser ? <CallPage /> : <Navigate to="/login" />} />
       </Routes>
 
       <Toaster />
+      <IncomingCallModal />
     </div>
   );
 };

@@ -19,21 +19,20 @@ export function getReceiverSocketId(userId) {
 const userSocketMap = {}; // {userId: socketId}
 
 io.on("connection", (socket) => {
-  console.log("A user connected", socket.id);
-
   const userId = socket.handshake.query.userId;
-  if (userId) userSocketMap[userId] = socket.id;
+  
+  if (userId) {
+    userSocketMap[userId] = socket.id;
+  }
 
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   // WebRTC signaling events
   socket.on("call-offer", (data) => {
-    console.log('Call offer received on server:', data);
     const { targetUserId, offer, callType } = data;
     const targetSocketId = getReceiverSocketId(targetUserId);
     
-    console.log('Target socket ID:', targetSocketId);
     if (targetSocketId) {
       io.to(targetSocketId).emit("call-offer", {
         fromUserId: userId,
@@ -93,8 +92,41 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Stream.io call invitation events
+  socket.on("call-invitation", (data) => {
+    const { targetUserId, callId, callType, callerInfo } = data;
+    const targetSocketId = getReceiverSocketId(targetUserId);
+    
+    if (targetSocketId) {
+      const callData = {
+        callId,
+        callType,
+        caller: callerInfo,
+        fromUserId: userId
+      };
+      io.to(targetSocketId).emit("incoming-call", callData);
+    } else {
+      socket.emit("call-failed", {
+        reason: "User is offline"
+      });
+    }
+  });
+
+  socket.on("call-response", (data) => {
+    const { targetUserId, callId, accepted } = data;
+    const targetSocketId = getReceiverSocketId(targetUserId);
+    
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("call-response", {
+        callId,
+        accepted,
+        fromUserId: userId
+      });
+    }
+  });
+
+
   socket.on("disconnect", () => {
-    console.log("A user disconnected", socket.id);
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });

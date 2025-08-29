@@ -1,14 +1,30 @@
-import { X, MoreVertical, ArrowLeft, UserMinus } from "lucide-react";
+import { X, MoreVertical, ArrowLeft, UserMinus, Phone, Video } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { useFriendStore } from "../store/useFriendStore";
+import { useCallStore } from "../store/useCallStore";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const { removeFriend } = useFriendStore();
+  const { sendCallInvitation } = useCallStore();
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCall = (callType = "video") => {
+    const callId = uuidv4();
+    
+    
+    // Send call invitation to the friend
+    sendCallInvitation(selectedUser._id, callId, callType);
+    
+    // Navigate to call page with call type
+    navigate(`/call/${callId}?type=${callType}`);
+  };
 
   const handleUnfriend = async () => {
     if (window.confirm(`Are you sure you want to remove ${selectedUser.fullName} from your friends?`)) {
@@ -73,6 +89,23 @@ const ChatHeader = () => {
 
         {/* Action buttons */}
         <div className="flex items-center gap-3 sm:gap-3 lg:gap-2">
+          {/* Call buttons */}
+          <button 
+            onClick={() => handleCall("audio")}
+            className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center text-primary-content"
+            title="Audio call"
+          >
+            <Phone className="w-4 h-4 sm:w-5 sm:h-5 lg:w-4 lg:h-4" />
+          </button>
+          
+          <button 
+            onClick={() => handleCall("video")}
+            className="w-10 h-10 sm:w-11 sm:h-11 lg:w-9 lg:h-9 rounded-full bg-success hover:bg-success/80 transition-colors flex items-center justify-center text-success-content"
+            title="Video call"
+          >
+            <Video className="w-4 h-4 sm:w-5 sm:h-5 lg:w-4 lg:h-4" />
+          </button>
+
           {/* More options dropdown */}
           <div className="dropdown dropdown-end">
             <button 

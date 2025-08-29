@@ -29,6 +29,17 @@ const messageSchema = new mongoose.Schema(
     seenAt: {
       type: Date,
     },
+    isCallHistory: {
+      type: Boolean,
+      default: false,
+    },
+    callId: {
+      type: String,
+    },
+    callType: {
+      type: String,
+      enum: ["audio", "video"],
+    },
   },
   { timestamps: true }
 );

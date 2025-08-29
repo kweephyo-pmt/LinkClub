@@ -136,3 +136,60 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const sendCallHistoryMessage = async (req, res) => {
+  try {
+    const { callId, callType, timestamp } = req.body;
+    const senderId = req.user._id;
+
+    // Find the other participant in the call (assuming it's the current selected user)
+    // We'll need to get this from the frontend or store call participants
+    const { receiverId } = req.body;
+
+    if (!receiverId) {
+      return res.status(400).json({ error: "Receiver ID is required" });
+    }
+
+    // Check if users are friends
+    const currentUser = await User.findById(senderId);
+    if (!currentUser.friends.includes(receiverId)) {
+      return res.status(403).json({ error: "You can only send messages to friends" });
+    }
+
+    const callHistoryMessage = new Message({
+      senderId,
+      receiverId,
+      text: `${callType === 'video' ? 'Video' : 'Audio'} call ended`,
+      isCallHistory: true,
+      callId,
+      callType,
+      status: "sent"
+    });
+
+    await callHistoryMessage.save();
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      callHistoryMessage.status = "delivered";
+      callHistoryMessage.deliveredAt = new Date();
+      await callHistoryMessage.save();
+      
+      io.to(receiverSocketId).emit("newMessage", callHistoryMessage);
+      
+      // Emit delivery status back to sender
+      const senderSocketId = getReceiverSocketId(senderId);
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("messageDelivered", {
+          messageId: callHistoryMessage._id,
+          status: "delivered",
+          deliveredAt: callHistoryMessage.deliveredAt
+        });
+      }
+    }
+
+    res.status(201).json(callHistoryMessage);
+  } catch (error) {
+    console.log("Error in sendCallHistoryMessage controller: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
