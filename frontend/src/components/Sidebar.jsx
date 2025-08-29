@@ -105,7 +105,24 @@ const Sidebar = () => {
             <p className="text-base-content/50 text-xs mt-1">Try adjusting your search or filters</p>
           </div>
         ) : (
-          filteredUsers.map((user) => (
+          filteredUsers
+            .sort((a, b) => {
+              const lastMessageA = lastMessages[a._id];
+              const lastMessageB = lastMessages[b._id];
+              
+              // If both have last messages, sort by timestamp (most recent first)
+              if (lastMessageA && lastMessageB) {
+                return new Date(lastMessageB.createdAt) - new Date(lastMessageA.createdAt);
+              }
+              
+              // If only one has a last message, prioritize it
+              if (lastMessageA && !lastMessageB) return -1;
+              if (!lastMessageA && lastMessageB) return 1;
+              
+              // If neither has messages, sort alphabetically
+              return a.fullName.localeCompare(b.fullName);
+            })
+            .map((user) => (
             <button
               key={user._id}
               onClick={() => setSelectedUser(user)}
