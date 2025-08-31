@@ -10,12 +10,20 @@ const Sidebar = () => {
   const { onlineUsers, authUser } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLastMessagesLoaded, setIsLastMessagesLoaded] = useState(false);
 
   useEffect(() => {
     if (authUser) {
       getUsers();
     }
   }, [getUsers, authUser]);
+
+  // Track when last messages are loaded to prevent flashing
+  useEffect(() => {
+    if (users.length > 0 && Object.keys(lastMessages).length > 0) {
+      setIsLastMessagesLoaded(true);
+    }
+  }, [users, lastMessages]);
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -26,7 +34,8 @@ const Sidebar = () => {
   // Count online friends (excluding current user)
   const onlineFriendsCount = users.filter(user => onlineUsers.includes(user._id)).length;
 
-  if (isUsersLoading) return <SidebarSkeleton />;
+  // Show skeleton while loading users or last messages to prevent flashing
+  if (isUsersLoading || (users.length > 0 && !isLastMessagesLoaded)) return <SidebarSkeleton />;
 
   return (
     <aside className="h-full w-full lg:w-80 border-r border-base-300 flex flex-col transition-all duration-300 bg-base-100 shadow-lg">
