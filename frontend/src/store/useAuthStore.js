@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { notificationManager } from "../lib/notifications.js";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "https://linkclub-production.up.railway.app";
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "https://linkclub-backend.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -47,12 +47,12 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      
+
       // Store token in localStorage as fallback for Safari
       if (res.data.token) {
         localStorage.setItem('jwt-token', res.data.token);
       }
-      
+
       set({ authUser: res.data });
       toast.success("Logged in successfully");
 
@@ -115,7 +115,7 @@ export const useAuthStore = create((set, get) => ({
       import("./useFriendStore").then(({ useFriendStore }) => {
         useFriendStore.getState().initializeNotifications();
       });
-      
+
       // Initialize global message subscription for last message updates
       import("./useChatStore").then(({ useChatStore }) => {
         useChatStore.getState().subscribeToMessages();
@@ -124,8 +124,8 @@ export const useAuthStore = create((set, get) => ({
       // Initialize call notifications
       import("./useCallStore").then(({ useCallStore }) => {
         const callStore = useCallStore.getState();
-        
-        
+
+
         socket.on("incoming-call", (data) => {
           callStore.setIncomingCall(data);
         });
@@ -140,7 +140,7 @@ export const useAuthStore = create((set, get) => ({
           });
         });
 
-        
+
       });
     }, 100);
   },
