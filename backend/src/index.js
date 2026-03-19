@@ -36,7 +36,7 @@ app.use("/api/stream", streamRoutes);
 app.get("/", (req, res) => {
   res.send("LinkClub API is running!");
 });
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log("server is running on PORT:" + PORT);
   connectDB();
 });
