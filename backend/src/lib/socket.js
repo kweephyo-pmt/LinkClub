@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://linkclub.netlify.app"],
+    origin: ["http://localhost:5173", "https://linkclub.vercel.app", "https://linkclub.social", "https://www.linkclub.social"],
   },
 });
 

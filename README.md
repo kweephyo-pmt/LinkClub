@@ -2,7 +2,7 @@
 
 A modern, full-stack real-time chat application built with the MERN stack, featuring instant messaging and comprehensive user management.
 
-🔗 **[Live Demo](https://linkclub.netlify.app/)**
+🔗 **[Live Demo](https://linkclub.social/)**
 
 ![LinkClub Demo](/frontend/public/HomePage.png)
 
@@ -187,10 +187,10 @@ linkclub/
 2. Set environment variables in Railway dashboard
 3. Deploy automatically on push to main branch
 
-### Frontend (Netlify)
-1. Build the frontend: `npm run build`
-2. Deploy the `dist` folder to Netlify
-3. Configure environment variables in Netlify dashboard
+### Frontend (Vercel)
+1. Import repository on Vercel
+2. Ensure framework preset is Vite and root directory is `frontend`
+3. Configure environment variables in Vercel dashboard
 
 ## 🤝 Contributing
 

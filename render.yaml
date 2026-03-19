@@ -23,7 +23,7 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       - key: FRONTEND_URL
-        value: https://linkclub.netlify.app
+        value: https://linkclub.social
       - key: STREAM_API_KEY
         sync: false
       - key: STREAM_API_SECRET

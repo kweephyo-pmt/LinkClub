@@ -23,7 +23,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://linkclub.netlify.app"],
+    origin: ["http://localhost:5173", "https://linkclub.vercel.app", "https://linkclub.social", "https://www.linkclub.social"],
     credentials: true,
   })
 );
