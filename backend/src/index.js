@@ -33,14 +33,9 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/friends", friendRoutes);
 app.use("/api/stream", streamRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
-
+app.get("/", (req, res) => {
+  res.send("LinkClub API is running!");
+});
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
   connectDB();
