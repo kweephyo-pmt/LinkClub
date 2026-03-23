@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import cron from "node-cron";
 
 import path from "path";
 
@@ -40,6 +41,16 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
+
+// Cron job to keep Render service awake
+cron.schedule("*/14 * * * *", () => {
+  const backendUrl = process.env.RENDER_EXTERNAL_URL || "https://linkclub.social";
+  console.log(`Pinging ${backendUrl} to keep server awake...`);
+  
+  fetch(backendUrl)
+    .then((res) => console.log(`Keep-alive ping successful. Status: ${res.status}`))
+    .catch((err) => console.error(`Keep-alive ping failed: ${err.message}`));
+});
 
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
